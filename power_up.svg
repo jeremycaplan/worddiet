@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+    <!-- Star Power-up -->
+    <path d="M20 0 L24 16 L40 16 L27 26 L32 40 L20 31 L8 40 L13 26 L0 16 L16 16 Z" 
+          fill="gold" 
+          stroke="#FFD700" 
+          stroke-width="2"/>
+</svg>

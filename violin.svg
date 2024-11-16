@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100" height="200" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+    <!-- Violin Body -->
+    <path d="M30 50 C30 30, 70 30, 70 50 C70 80, 80 100, 80 130 C80 160, 50 190, 50 190 C50 190, 20 160, 20 130 C20 100, 30 80, 30 50" 
+          fill="#8B4513" stroke="#000" stroke-width="2"/>
+    
+    <!-- Bridge -->
+    <rect x="45" y="120" width="10" height="5" fill="#DEB887"/>
+    
+    <!-- Strings -->
+    <line x1="35" y1="60" x2="35" y2="170" stroke="black" stroke-width="1"/>
+    <line x1="45" y1="60" x2="45" y2="170" stroke="black" stroke-width="1"/>
+    <line x1="55" y1="60" x2="55" y2="170" stroke="black" stroke-width="1"/>
+    <line x1="65" y1="60" x2="65" y2="170" stroke="black" stroke-width="1"/>
+    
+    <!-- Scroll -->
+    <path d="M40 20 C40 10, 60 10, 60 20 C60 30, 40 30, 40 20" fill="#8B4513" stroke="#000" stroke-width="2"/>
+    
+    <!-- F-holes -->
+    <path d="M35 100 C35 95, 40 95, 40 100 C40 105, 35 105, 35 100" fill="black"/>
+    <path d="M60 100 C60 95, 65 95, 65 100 C65 105, 60 105, 60 100" fill="black"/>
+</svg>

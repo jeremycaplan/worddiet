@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Violin</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="welcome-screen">
+        <h1>Welcome to Flappy Violin!</h1>
+        <div class="player-form">
+            <input type="text" id="player-name" placeholder="Enter your name" maxlength="15">
+            <button id="start-button" disabled>Start Game</button>
+        </div>
+        <div class="instructions">
+            <p>🎵 Avoid the musical notes</p>
+            <p>⭐ Collect power-ups for special effects</p>
+            <p>SPACE to jump</p>
+        </div>
+        <div class="high-scores">
+            <h2>High Scores</h2>
+            <div id="high-scores-list"></div>
+        </div>
+    </div>
+    <div class="game-container">
+        <img src="violin.svg" id="violin" alt="Flappy Violin">
+        <div id="score">0</div>
+        <div id="power-up-status"></div>
+        <div id="player-display"></div>
+    </div>
+    <div class="game-over">
+        <h2>Game Over!</h2>
+        <p>Player: <span id="final-player">Player</span></p>
+        <p>Score: <span id="final-score">0</span></p>
+        <p id="high-score-message"></p>
+        <button onclick="startGame()">Play Again</button>
+    </div>
+    <audio id="jump-sound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
+    <audio id="power-up-sound" src="https://assets.mixkit.co/active_storage/sfx/2578/2578-preview.mp3" preload="auto"></audio>
+    <audio id="high-score-sound" src="https://assets.mixkit.co/active_storage/sfx/2580/2580-preview.mp3" preload="auto"></audio>
+    <script src="script.js"></script>
+</body>
+</html>

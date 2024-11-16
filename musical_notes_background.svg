@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Musical Note Pattern -->
+        <pattern id="notePattern" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
+            <!-- Quarter Note -->
+            <g fill="#2c3e50" opacity="0.2">
+                <circle cx="50" cy="100" r="8"/>
+                <line x1="58" y1="100" x2="58" y2="60" stroke="#2c3e50" stroke-width="2"/>
+                
+                <!-- Eighth Note -->
+                <circle cx="150" cy="150" r="8"/>
+                <line x1="158" y1="150" x2="158" y2="110" stroke="#2c3e50" stroke-width="2"/>
+                <path d="M158 110 C158 105, 170 108, 170 115" stroke="#2c3e50" fill="none" stroke-width="2"/>
+                
+                <!-- Half Note -->
+                <circle cx="100" cy="50" r="8" stroke="#2c3e50" stroke-width="2" fill="none"/>
+                <line x1="108" y1="50" x2="108" y2="10" stroke="#2c3e50" stroke-width="2"/>
+            </g>
+        </pattern>
+    </defs>
+    
+    <!-- Background with gradient -->
+    <rect width="100%" height="100%" fill="#87CEEB"/>
+    
+    <!-- Musical notes pattern overlay -->
+    <rect width="100%" height="100%" fill="url(#notePattern)"/>
+</svg>
