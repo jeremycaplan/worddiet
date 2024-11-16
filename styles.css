@@ -219,3 +219,15 @@ body {
 .game-over button:hover {
     background: #34495e;
 }
+
+.power-up-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.power-up-list li {
+    margin: 5px 0;
+    color: #333;
+    font-size: 0.9em;
+}

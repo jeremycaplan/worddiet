@@ -28,6 +28,14 @@ let violinPosition = {
     jump: -8,
     isInvincible: false
 };
+let powerUpTypes = [
+    { type: 'star', image: 'power_up.svg', effect: 'invincibility' },
+    { type: 'notes', image: 'double_score.svg', effect: 'double_score' },
+    { type: 'clock', image: 'slow_motion.svg', effect: 'slow_motion' }
+];
+let isInvincible = false;
+let doubleScoreActive = false;
+let slowMotionActive = false;
 
 // High scores management
 function getHighScores() {
@@ -73,15 +81,15 @@ function createObstacle() {
 }
 
 function createPowerUp() {
-    const powerUp = document.createElement('div');
+    const randomType = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
+    const powerUp = document.createElement('img');
+    powerUp.src = randomType.image;
     powerUp.className = 'power-up';
-    powerUp.style.left = gameContainer.clientWidth + 'px';
-    powerUp.style.top = Math.random() * (gameContainer.clientHeight - 100) + 'px';
+    powerUp.style.left = '100%';
+    powerUp.style.top = Math.random() * (gameContainer.clientHeight - 40) + 'px';
+    powerUp.dataset.type = randomType.type;
     gameContainer.appendChild(powerUp);
-    powerUps.push({
-        element: powerUp,
-        collected: false
-    });
+    return powerUp;
 }
 
 function moveObstacles() {
@@ -95,8 +103,7 @@ function moveObstacles() {
             
             if (!obstacle.passed && currentLeft < 50) {
                 obstacle.passed = true;
-                score++;
-                scoreDisplay.textContent = `Score: ${score}`;
+                updateScore();
             }
         }
     });
@@ -104,29 +111,30 @@ function moveObstacles() {
 
 function movePowerUps() {
     powerUps.forEach((powerUp, index) => {
-        const currentLeft = parseFloat(powerUp.element.style.left);
+        const currentLeft = parseFloat(powerUp.style.left);
         if (currentLeft < -60) {
-            powerUp.element.remove();
+            powerUp.remove();
             powerUps.splice(index, 1);
         } else {
-            powerUp.element.style.left = (currentLeft - 4) + 'px';
+            powerUp.style.left = (currentLeft - 4) + 'px';
         }
     });
 }
 
 function checkCollision() {
-    if (violinPosition.isInvincible) return false;
+    if (isInvincible) return false;
     
     const violinRect = violin.getBoundingClientRect();
     
     for (const powerUp of powerUps) {
-        if (!powerUp.collected) {
-            const powerUpRect = powerUp.element.getBoundingClientRect();
+        if (powerUp.dataset.type) {
+            const powerUpRect = powerUp.getBoundingClientRect();
             if (!(violinRect.right < powerUpRect.left || 
                 violinRect.left > powerUpRect.right || 
                 violinRect.bottom < powerUpRect.top || 
                 violinRect.top > powerUpRect.bottom)) {
-                collectPowerUp(powerUp);
+                activatePowerUp(powerUp.dataset.type);
+                powerUp.remove();
             }
         }
     }
@@ -144,21 +152,47 @@ function checkCollision() {
     return violinPosition.y < 0 || violinPosition.y > gameContainer.clientHeight - violin.clientHeight;
 }
 
-function collectPowerUp(powerUp) {
-    powerUp.collected = true;
-    powerUp.element.remove();
-    powerUpSound.currentTime = 0;
+function activatePowerUp(type) {
+    const statusDiv = document.getElementById('power-up-status');
+
+    switch(type) {
+        case 'star':
+            isInvincible = true;
+            statusDiv.textContent = '⭐ Invincible!';
+            setTimeout(() => {
+                isInvincible = false;
+                statusDiv.textContent = '';
+            }, 5000);
+            break;
+        case 'notes':
+            doubleScoreActive = true;
+            statusDiv.textContent = '♫ Double Score!';
+            setTimeout(() => {
+                doubleScoreActive = false;
+                statusDiv.textContent = '';
+            }, 5000);
+            break;
+        case 'clock':
+            slowMotionActive = true;
+            statusDiv.textContent = '⏱ Slow Motion!';
+            document.querySelectorAll('.obstacle').forEach(obstacle => {
+                obstacle.style.animationDuration = '4s';
+            });
+            setTimeout(() => {
+                slowMotionActive = false;
+                statusDiv.textContent = '';
+                document.querySelectorAll('.obstacle').forEach(obstacle => {
+                    obstacle.style.animationDuration = '2s';
+                });
+            }, 5000);
+            break;
+    }
     powerUpSound.play();
-    
-    violinPosition.isInvincible = true;
-    powerUpStatus.textContent = "⭐ Invincible!";
-    violin.style.opacity = "0.7";
-    
-    setTimeout(() => {
-        violinPosition.isInvincible = false;
-        powerUpStatus.textContent = "";
-        violin.style.opacity = "1";
-    }, 5000);
+}
+
+function updateScore() {
+    score += doubleScoreActive ? 2 : 1;
+    document.getElementById('score').textContent = score;
 }
 
 function updateViolinPosition() {
@@ -205,7 +239,7 @@ function startGame() {
     gameOverScreen.style.display = 'none';
     
     obstacles.forEach(obstacle => obstacle.element.remove());
-    powerUps.forEach(powerUp => powerUp.element.remove());
+    powerUps.forEach(powerUp => powerUp.remove());
     obstacles = [];
     powerUps = [];
     
@@ -217,14 +251,13 @@ function startGame() {
         isInvincible: false
     };
     
-    violin.style.opacity = "1";
-    
     gameLoop = setInterval(() => {
         if (Math.random() < 0.02) {
             createObstacle();
         }
         if (Math.random() < 0.005) {
-            createPowerUp();
+            const powerUp = createPowerUp();
+            powerUps.push(powerUp);
         }
         moveObstacles();
         movePowerUps();
