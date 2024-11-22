@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordDiet - Trim Your Words</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 90%;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.8rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tagline {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 1.4rem;
+            color: #34495e;
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+        }
+
+        .input-container {
+            margin: 2rem 0;
+        }
+
+        input {
+            width: 80%;
+            max-width: 500px;
+            padding: 1rem 1.5rem;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 50px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .result {
+            margin-top: 3rem;
+            font-size: 2.5rem;
+            font-weight: 300;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result span {
+            font-family: 'Playfair Display', serif;
+            color: #34495e;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.8);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .result span:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .examples {
+            font-size: 1.2rem;
+            color: #666;
+            margin-top: 0.5rem;
+            opacity: 0.8;
+        }
+
+        .footer {
+            margin-top: 4rem;
+            font-size: 1rem;
+            color: #666;
+            opacity: 0.8;
+        }
+
+        .credit {
+            font-size: 0.9rem;
+            color: #666;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 600px) {
+            .logo {
+                font-size: 2.8rem;
+            }
+            
+            .tagline {
+                font-size: 1.2rem;
+            }
+            
+            input {
+                font-size: 1.2rem;
+            }
+            
+            .result {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="logo">WordDiet</h1>
+        <div class="tagline">Trim the excess. Keep the meaning.</div>
+        <div class="input-container">
+            <input type="text" id="wordInput" placeholder="Enter a word or phrase (e.g., 'very large')" autocomplete="off">
+            <div class="examples">
+                Try: "very important", "extremely difficult", or any complex word
+            </div>
+        </div>
+        <div class="result" id="result"></div>
+        <div class="footer">
+            Making language leaner, one word at a time.<br>
+            <span class="credit">A <a href="https://wondertools.org" target="_blank">Wonder Tools</a> project by <a href="https://github.com/jeremycaplan" target="_blank">Jeremy Caplan</a>, made with Windsurf Cascade</span>
+        </div>
+    </div>
+
+    <script>
+        const wordInput = document.getElementById('wordInput');
+        const result = document.getElementById('result');
+        let typingTimer;
+
+        wordInput.addEventListener('input', () => {
+            clearTimeout(typingTimer);
+            if (wordInput.value) {
+                typingTimer = setTimeout(simplifyWord, 500);
+            } else {
+                result.innerHTML = '';
+            }
+        });
+
+        async function simplifyWord() {
+            const word = wordInput.value.trim();
+            if (!word) return;
+
+            try {
+                const response = await fetch('/simplify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ word }),
+                });
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    result.innerHTML = `<span class="error">${data.error}</span>`;
+                } else {
+                    result.innerHTML = `<span>${data.result}</span>`;
+                }
+            } catch (error) {
+                result.innerHTML = '<span class="error">Something went wrong. Please try again.</span>';
+            }
+        }
+    </script>
+</body>
+</html>
