@@ -2,13 +2,23 @@
 
 Trim the excess. Keep the meaning. WordDiet is a simple web application that helps you find shorter, simpler alternatives to complex words and phrases.
 
+🔗 **[Try WordDiet Now](https://jeremycaplan.pythonanywhere.com)**
+
 ## Features
 
 - Simplify complex words with shorter alternatives
-- Handle intensifier phrases (e.g., "very large" → "huge")
+- Handle intensifier phrases (e.g., "very large" → "big")
 - Real-time word processing
 - Clean, elegant interface
 - Mobile-responsive design
+
+## Examples
+
+Try phrases like:
+- "extremely difficult" → "tough"
+- "very important" → "key"
+- "very beautiful" → "lovely"
+- "extremely angry" → "livid"
 
 ## Technology Stack
 
@@ -35,15 +45,15 @@ pip install -r requirements.txt
 python app.py
 ```
 
-4. Open your browser and visit: `http://127.0.0.1:5000`
+4. Open your browser and visit: `http://127.0.0.1:8080`
 
 ## Usage
 
-Simply type a complex word or phrase (like "very important") into the input field, and WordDiet will instantly suggest a simpler, more concise alternative (like "crucial").
+Simply type a complex word or phrase (like "very important") into the input field, and WordDiet will instantly suggest a simpler, more concise alternative (like "key").
 
 ## Credits
 
-A [Wonder Tools](https://wondertools.org) project by [Jeremy Caplan](https://github.com/jeremycaplan), made with Windsurf Cascade.
+A [Wonder Tools](https://wondertools.substack.com) project by [Jeremy Caplan](https://www.jeremycaplan.com), made with Windsurf Cascade.
 
 ## License
 
