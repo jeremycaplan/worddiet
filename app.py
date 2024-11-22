@@ -6,56 +6,86 @@ import os
 # Download required NLTK data
 nltk.download('wordnet')
 nltk.download('omw-1.4')
+nltk.download('brown')  # For word frequency
+from nltk.corpus import brown
+
+# Create word frequency dictionary
+word_freq = nltk.FreqDist(i.lower() for i in brown.words())
 
 app = Flask(__name__)
 
-# Dictionary of intensifier mappings
+# Dictionary of intensifier mappings with simpler alternatives
 INTENSIFIER_MAPPINGS = {
     'very': {
-        'large': 'huge',
+        'large': 'big',
         'small': 'tiny',
-        'good': 'excellent',
-        'bad': 'terrible',
-        'happy': 'elated',
-        'sad': 'devastated',
-        'tired': 'exhausted',
-        'angry': 'furious',
-        'beautiful': 'gorgeous',
-        'important': 'crucial',
-        'difficult': 'arduous',
-        'easy': 'effortless',
-        'cold': 'freezing',
-        'hot': 'scorching',
-        'bright': 'dazzling',
-        'dark': 'pitch-black',
-        'quiet': 'silent',
-        'loud': 'deafening',
-        'fast': 'rapid',
-        'slow': 'sluggish'
+        'good': 'great',
+        'bad': 'awful',
+        'happy': 'glad',
+        'sad': 'upset',
+        'tired': 'beat',
+        'angry': 'mad',
+        'beautiful': 'lovely',
+        'important': 'key',
+        'difficult': 'hard',
+        'easy': 'simple',
+        'cold': 'icy',
+        'hot': 'burning',
+        'bright': 'sunny',
+        'dark': 'dim',
+        'quiet': 'soft',
+        'loud': 'noisy',
+        'fast': 'quick',
+        'slow': 'lazy'
     },
     'extremely': {
-        'large': 'enormous',
-        'small': 'microscopic',
-        'good': 'outstanding',
-        'bad': 'atrocious',
-        'happy': 'overjoyed',
-        'sad': 'heartbroken',
-        'tired': 'depleted',
-        'angry': 'enraged',
-        'beautiful': 'stunning',
+        'large': 'huge',
+        'small': 'tiny',
+        'good': 'great',
+        'bad': 'awful',
+        'happy': 'joyful',
+        'sad': 'gloomy',
+        'tired': 'drained',
+        'angry': 'livid',
+        'beautiful': 'lovely',
         'important': 'vital',
-        'difficult': 'insurmountable',
-        'easy': 'simple',
-        'cold': 'arctic',
-        'hot': 'sweltering',
-        'bright': 'blinding',
-        'dark': 'obscure',
-        'quiet': 'hushed',
-        'loud': 'thunderous',
-        'fast': 'lightning-fast',
-        'slow': 'lethargic'
+        'difficult': 'tough',
+        'easy': 'basic',
+        'cold': 'frigid',
+        'hot': 'boiling',
+        'bright': 'shining',
+        'dark': 'black',
+        'quiet': 'silent',
+        'loud': 'roaring',
+        'fast': 'swift',
+        'slow': 'plodding'
     }
 }
+
+def count_syllables(word):
+    """Estimate syllable count using a simple vowel-based approach"""
+    word = word.lower()
+    count = 0
+    vowels = "aeiouy"
+    if word[0] in vowels:
+        count += 1
+    for index in range(1, len(word)):
+        if word[index] in vowels and word[index - 1] not in vowels:
+            count += 1
+    if word.endswith("e"):
+        count -= 1
+    if count == 0:
+        count += 1
+    return count
+
+def get_word_complexity_score(word):
+    """Calculate a complexity score based on frequency, length, and syllables"""
+    frequency = word_freq[word] if word in word_freq else 0
+    frequency_score = 1 if frequency > 100 else 0.5 if frequency > 10 else 0
+    length_score = 1 if len(word) <= 5 else 0.5 if len(word) <= 7 else 0
+    syllable_score = 1 if count_syllables(word) <= 2 else 0.5 if count_syllables(word) <= 3 else 0
+    
+    return frequency_score + length_score + syllable_score
 
 def find_simpler_word(input_text):
     # Split the input into words
@@ -69,7 +99,7 @@ def find_simpler_word(input_text):
     
     # If not an intensifier pattern or no mapping found, try to simplify the last word
     word_to_simplify = words[-1]
-    simpler_alternatives = []
+    alternatives = []
     
     # Get synsets for the input word
     synsets = wordnet.synsets(word_to_simplify)
@@ -81,16 +111,14 @@ def find_simpler_word(input_text):
     for synset in synsets:
         for lemma in synset.lemmas():
             word = lemma.name()
-            # Only consider shorter words that aren't the same as input
+            # Only consider words that are shorter than input
             if len(word) < len(word_to_simplify) and word != word_to_simplify:
-                simpler_alternatives.append(word)
+                alternatives.append((word, get_word_complexity_score(word)))
     
-    # Sort by length (shortest first) and remove duplicates while preserving order
-    seen = set()
-    simpler_alternatives = [x for x in sorted(simpler_alternatives, key=len) 
-                          if not (x in seen or seen.add(x))]
+    # Sort by complexity score (higher is simpler) and length
+    alternatives.sort(key=lambda x: (-x[1], len(x[0])))
     
-    return simpler_alternatives[0] if simpler_alternatives else None
+    return alternatives[0][0] if alternatives else None
 
 @app.route('/')
 def home():
